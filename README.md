@@ -14,3 +14,11 @@ Flags:
   -l, --level string         level (allowed: 'info', 'warn', 'error') (default "info")
   -t, --title string         title
 ```
+
+## Configuration
+
+The following is an example of a configuration file.
+
+```yaml
+token: "<your Discord Bot Token>"
+```
