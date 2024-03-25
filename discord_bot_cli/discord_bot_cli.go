@@ -9,6 +9,13 @@ import (
 	"net/http"
 )
 
+var Levels = map[string]int{
+	"info":    0x42a5f5,
+	"warn":    0xf57c00,
+	"error":   0xd32f2f,
+	"success": 0x388e3c,
+}
+
 type Embed struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -20,15 +27,12 @@ type Context struct {
 }
 
 func getColor(level string) int {
-	switch level {
-	case "info":
-		return 0x44aaee
-	case "warn":
-		return 0xffcc55
-	case "error":
-		return 0xff3366
+	color, ok := Levels[level]
+	if ok {
+		return color
+	} else {
+		return Levels["info"]
 	}
-	return 0x44aaee
 }
 
 func Run(token string, channelID string, level string, title string, description string) {
