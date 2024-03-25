@@ -31,8 +31,8 @@ func getColor(level string) int {
 	return 0x44aaee
 }
 
-func Run(token string, channel string, level string, title string, description string) {
-	url := fmt.Sprintf("https://discordapp.com/api/channels/%s/messages", channel)
+func Run(token string, channelID string, level string, title string, description string) {
+	url := fmt.Sprintf("https://discordapp.com/api/channels/%s/messages", channelID)
 
 	context := Context{
 		Embed: Embed{

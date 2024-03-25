@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	"github.com/ITK13201/discord-bot-cli/discord_bot_cli"
 	"log"
 	"os"
@@ -11,8 +12,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+type Channel struct {
+	Name string `json:"name"`
+	ID   string `json:"id"`
+}
+
 type Config struct {
-	Token string `json:"token"`
+	Token    string    `json:"token"`
+	Channels []Channel `json:"channels"`
 }
 
 var (
@@ -25,8 +32,19 @@ var (
 		Short: "cli application for notifications to discord",
 		Long:  "cli application for notifications to discord",
 		Run: func(cmd *cobra.Command, args []string) {
-			channel, err := cmd.Flags().GetString("channel")
-			if err != nil {
+			channelName, err := cmd.Flags().GetString("channel")
+			channelID := ""
+			if err == nil {
+				for i := range config.Channels {
+					if config.Channels[i].Name == channelName {
+						channelID = config.Channels[i].ID
+						break
+					}
+				}
+				if channelID == "" {
+					log.Fatal(errors.New(fmt.Sprintf("channel ID not found: %s", channelName)))
+				}
+			} else {
 				log.Fatal(err)
 			}
 			level, err := cmd.Flags().GetString("level")
@@ -47,7 +65,7 @@ var (
 			}
 			discord_bot_cli.Run(
 				config.Token,
-				channel,
+				channelID,
 				level,
 				title,
 				description,
@@ -69,7 +87,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.discord-bot-cli.yaml)")
-	rootCmd.PersistentFlags().StringP("channel", "c", "", "channel ID")
+	rootCmd.PersistentFlags().StringP("channel", "c", "", "channel name defined in config file")
 	rootCmd.PersistentFlags().StringP("level", "l", "info", "level (allowed: 'info', 'warn', 'error')")
 	rootCmd.PersistentFlags().StringP("title", "t", "", "title")
 	rootCmd.PersistentFlags().StringP("description", "d", "", "description")
