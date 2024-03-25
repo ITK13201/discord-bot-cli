@@ -4,12 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ITK13201/discord-bot-cli/discord_bot_cli"
-	"log"
-	"os"
-	"slices"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"log"
+	"os"
 )
 
 type Channel struct {
@@ -25,7 +23,6 @@ type Config struct {
 var (
 	cfgFile string
 	config  Config
-	levels  = []string{"info", "warn", "error"}
 
 	rootCmd = &cobra.Command{
 		Use:   "discord-bot-cli",
@@ -48,11 +45,7 @@ var (
 				log.Fatal(err)
 			}
 			level, err := cmd.Flags().GetString("level")
-			if err == nil {
-				if !slices.Contains(levels, level) {
-					log.Fatal(errors.New("'level' flag must be one of these: 'info', 'warn', 'error'"))
-				}
-			} else {
+			if err != nil {
 				log.Fatal(err)
 			}
 			title, err := cmd.Flags().GetString("title")
